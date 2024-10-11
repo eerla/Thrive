@@ -2,11 +2,10 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-const Menu = ({ navigation, isVisible, onClose }) => {
-  if (!isVisible) return null;
+const Menu = ({ navigation, onClose }) => {
 
   return (
-    <View className="absolute top-0 left-0 right-0 bg-white p-5 shadow-md">
+    <View className="bg-white p-2 rounded-lg">
       <TouchableOpacity onPress={() => { navigation.navigate('Home'); onClose(); }}>
         <Text className="p-2 text-lg text-gray-800">Home</Text>
       </TouchableOpacity>
