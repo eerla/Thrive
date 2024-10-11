@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, ScrollView } from 'react-native';
-import { useTailwind } from 'tailwindcss-react-native';
 import * as Notifications from 'expo-notifications';
 import OpenAIService from '../services/OpenAIService';
 import { Picker } from '@react-native-picker/picker';
@@ -16,11 +15,10 @@ const occupations = [
 const languages = [
   'English', 'Mandarin', 'Hindi', 'Spanish', 'French',
   'Arabic', 'Bengali', 'Russian', 'Portuguese', 'Indonesian',
-  'Urdu', 'German', 'Japanese', 'Swahili', 'Marathi'
+  'Urdu', 'German', 'Japanese', 'Telugu', 'Chinese'
 ];
 
 export default function ConfigScreen({ navigation }) {
-  const tailwind = useTailwind();
   const [name, setName] = useState('');
   const [gender, setGender] = useState('Neutral');
   const [age, setAge] = useState('');
@@ -66,24 +64,24 @@ export default function ConfigScreen({ navigation }) {
   };
 
   return (
-      <ScrollView contentContainerStyle={tailwind('flex-1 justify-center p-4')}>
-        <View style={tailwind('w-full max-w-md mx-auto')}>
-          <Text style={tailwind('text-2xl font-bold mb-6 text-center')}>Enter Your Details</Text>
+      <ScrollView contentContainerStyle='flex-1 justify-center p-6 bg-white'>
+        <View className='w-full max-w-md mx-auto bg-white rounded-lg shadow-lg p-6'>
+          <Text className='text-3xl font-bold mb-4 text-center text-gray-800'>Enter Your Details</Text>
 
           {/* Name Input */}
-          <Text style={tailwind('mb-2 text-lg')}>Name:</Text>
+          <Text className='mb-2 text-lg text-gray-700'>Name:</Text>
           <TextInput
-            style={tailwind('border p-3 mb-4 rounded-lg')}
+            className='border border-gray-300 p-3 mb-4 rounded-lg'
             placeholder="Enter your name"
             value={name}
             onChangeText={setName}
           />
 
           {/* Gender Dropdown */}
-          <Text style={tailwind('mb-2 text-lg')}>Select Gender:</Text>
+          <Text className='mb-2 text-lg text-gray-700'>Select Gender:</Text>
           <Picker
             selectedValue={gender}
-            style={tailwind('border p-3 mb-4 rounded-lg')}
+            className='border border-gray-300 mb-4 rounded-lg'
             onValueChange={(itemValue) => setGender(itemValue)}
           >
             <Picker.Item label="Male" value="Male" />
@@ -93,9 +91,9 @@ export default function ConfigScreen({ navigation }) {
           </Picker>
 
           {/* Age Input */}
-          <Text style={tailwind('mb-2 text-lg')}>Age:</Text>
+          <Text className='mb-2 text-lg text-gray-700'>Age:</Text>
           <TextInput
-            style={tailwind('border p-3 mb-4 rounded-lg')}
+            className='border border-gray-300 p-3 mb-4 rounded-lg'
             placeholder="Enter your age"
             value={age.toString()}
             onChangeText={(text) => setAge(Number(text))}
@@ -103,10 +101,10 @@ export default function ConfigScreen({ navigation }) {
           />
 
           {/* Occupation Dropdown */}
-          <Text style={tailwind('mb-2 text-lg')}>Select Occupation:</Text>
+          <Text className='mb-2 text-lg text-gray-700'>Select Occupation:</Text>
           <Picker
             selectedValue={occupation}
-            style={tailwind('border p-3 mb-4 rounded-lg')}
+            className='border border-gray-300 mb-4 rounded-lg'
             onValueChange={(itemValue) => setOccupation(itemValue)}
           >
             {occupations.map((occ) => (
@@ -115,10 +113,10 @@ export default function ConfigScreen({ navigation }) {
           </Picker>
 
           {/* Language Dropdown */}
-          <Text style={tailwind('mb-2 text-lg')}>Select Language:</Text>
+          <Text className='mb-2 text-lg text-gray-700'>Select Language:</Text>
           <Picker
             selectedValue={language}
-            style={tailwind('border p-3 mb-4 rounded-lg')}
+            className='border border-gray-300 mb-4 rounded-lg'
             onValueChange={(itemValue) => setLanguage(itemValue)}
           >
             {languages.map((lang) => (
@@ -127,10 +125,10 @@ export default function ConfigScreen({ navigation }) {
           </Picker>
 
           {/* Frequency Dropdown */}
-          <Text style={tailwind('mb-2 text-lg')}>Select Notification Frequency:</Text>
+          <Text className='mb-2 text-lg text-gray-700'>Select Notification Frequency:</Text>
           <Picker
             selectedValue={frequency}
-            style={tailwind('border p-3 mb-4 rounded-lg')}
+            className='border border-gray-300 mb-6 rounded-lg'
             onValueChange={(itemValue) => setFrequency(itemValue)}
           >
             <Picker.Item label="1 per day" value={1} />
