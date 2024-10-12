@@ -31,7 +31,15 @@ async function registerForPushNotificationsAsync() {
     })).data;
     console.log('TOKEN',token); // need to store in server device token
 
-    return token;
+    // return token;
+    // Send token to backend
+    fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+    });
 }
 
 
