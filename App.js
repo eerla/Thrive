@@ -12,23 +12,55 @@ import { NativeWindStyleSheet } from 'nativewind';
 LogBox.ignoreLogs(['NativeWindStyleSheet']);
 const Stack = createStackNavigator();
 
+async function registerForPushNotificationsAsync() {
+    let token;
+
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync({
+        projectId: '17ce3928-9295-45e6-a288-3cbe9e714418' // expo project id
+    })).data;
+    console.log('TOKEN',token); // need to store in server device token
+
+    return token;
+}
+
+
+
+
 export default function App() {
   useEffect(() => {
-    Notifications.requestPermissionsAsync().then(({ status }) => {
-      if (status !== 'granted') {
-        alert('Notification permissions are required!');
-      }
+    // Register for push notifications
+    registerForPushNotificationsAsync();
+
+    // Set the notification handler
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true, // Show an alert for notifications
+      }),
     });
+//Notifications.addNotificationReceivedListener(notification => {
+//    alert(`New notification: ${notification.request.content.title}`);
+//});
   }, []);
 
-    return (
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="Home">
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Config" component={ConfigScreen} />
-            <Stack.Screen name="Quote" component={QuoteScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      );
-    }
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Config" component={ConfigScreen} />
+        <Stack.Screen name="Quote" component={QuoteScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 

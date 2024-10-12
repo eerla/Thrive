@@ -46,7 +46,6 @@ export default function HomeScreen({ navigation }) {
           right: 15,
           width: 150, // Width of the menu
           borderRadius: 8,
-          elevation: 5, // Add shadow effect
           zIndex: 1000, // Ensure this is higher than other components
         }}
       >

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Thrive",
-    "slug": "Thrive",
+    "slug": "thrive",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,16 +12,24 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eezie.thrive"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.eezie.thrive"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "17ce3928-9295-45e6-a288-3cbe9e714418"
+      }
+    },
+    "owner": "eezie"
   }
 }
