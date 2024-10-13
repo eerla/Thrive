@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as Notifications from 'expo-notifications';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -12,7 +12,7 @@ import { NativeWindStyleSheet } from 'nativewind';
 LogBox.ignoreLogs(['NativeWindStyleSheet']);
 const Stack = createStackNavigator();
 
-async function registerForPushNotificationsAsync() {
+async function registerForPushNotificationsAsync(setDeviceToken) {
     let token;
 
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -31,44 +31,102 @@ async function registerForPushNotificationsAsync() {
     })).data;
     console.log('TOKEN',token); // need to store in server device token
 
-    // return token;
+    // Set the token globally
+    setDeviceToken(token);
+
+    // Default user data (you can change these default values)
+    const defaultUserData = {
+        token,
+        name: 'User', // Default name
+        gender: 'Neutral', // Default gender
+        age: 25, // Default age
+        occupation: 'Living Life', // Default occupation
+        language: 'English', // Default language
+        frequency: 1  // Default frequency of notifications
+    };
+    console.log(defaultUserData)
+    console.log('calling backend')
     // Send token to backend
-    fetch('http://localhost:3000/register', {
+    fetch('http://10.0.2.2:3000/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token }),
-    });
+        body: JSON.stringify(defaultUserData),
+    })
+    .then(response => response.text())
+    .then(data => console.log('Success:', data))
+    .catch(error => console.error('Error updating user data:', error));
 }
 
-
-
-
 export default function App() {
+  const notificationListener = useRef();
+  const responseListener = useRef();
+  const navigationRef = useRef();
+  const [userName, setUserName] = useState("User"); // Default username
+  const [motivationalQuote, setMotivationalQuote] = useState(''); // Store the motivational quote
+  const [deviceToken, setDeviceToken] = useState(null);
+
   useEffect(() => {
     // Register for push notifications
-    registerForPushNotificationsAsync();
+    registerForPushNotificationsAsync(setDeviceToken);
 
     // Set the notification handler
     Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true, // Show an alert for notifications
-      }),
-    });
-//Notifications.addNotificationReceivedListener(notification => {
-//    alert(`New notification: ${notification.request.content.title}`);
-//});
-  }, []);
+          handleNotification: async () => ({
+            shouldShowAlert: true, // Show an alert for notifications
+          }),
+        });
+
+    // Listener for receiving notifications while the app is foregrounded
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+          console.log('Notification received in foreground:', notification);
+          // You might want to update the quote here if necessary
+          setMotivationalQuote(notification.request.content.body);
+        });
+
+    // Listener for handling notification taps
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+       console.log('Notification tap received:', response);
+       const quoteFromNotification = response.notification.request.content.body;
+       console.log('quoteFromNotification', quoteFromNotification);
+       setMotivationalQuote(quoteFromNotification); // Update the app state with new quote
+
+        // Navigate to the QuoteScreen with the notification content
+        console.log('navigating to quote screen')
+        navigationRef.current?.navigate('Quote', { userName: currentUserName, quoteFromNotification });
+      });
+
+      return () => {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+        Notifications.removeNotificationSubscription(responseListener.current);
+      };
+    }, [userName]);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Config" component={ConfigScreen} />
-        <Stack.Screen name="Quote" component={QuoteScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
+      <NavigationContainer ref={navigationRef}>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Config">
+            {(props) => (
+              <ConfigScreen
+                {...props}
+                setUserName={setUserName}
+                deviceToken={deviceToken} // Pass device token to ConfigScreen
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Quote">
+            {(props) => (
+              <QuoteScreen
+                {...props}
+                motivationalQuote={motivationalQuote} // Pass the quote from App state
+                userName={userName} // Pass the userName from App state
+              />
+            )}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 
