@@ -66,6 +66,8 @@ quotes tailored to individual user preferences, making it a perfect companion fo
 - **API**: OpenAI's API for generating motivational quotes.
 - **Notifications**: Expo's push notification service for sending notifications to users.
 
+## Backend code github repository - https://github.com/eerla/thrive-backend
+
 ## Installation
 
 ### Prerequisites
@@ -79,4 +81,4 @@ quotes tailored to individual user preferences, making it a perfect companion fo
 
 ```bash
 git clone <repository-url>
-cd thrive
+cd Thrive
