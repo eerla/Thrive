@@ -44,7 +44,7 @@ export default function HomeScreen({ navigation }) {
           position: 'absolute',
           top: 70, // Adjust based on your layout
           right: 15,
-          width: 150, // Width of the menu
+          width: 100, // Width of the menu
           borderRadius: 8,
           zIndex: 1000, // Ensure this is higher than other components
         }}

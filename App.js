@@ -94,7 +94,7 @@ export default function App() {
 
         // Navigate to the QuoteScreen with the notification content
         console.log('navigating to quote screen')
-        navigationRef.current?.navigate('Quote', { userName: currentUserName, quoteFromNotification });
+         navigationRef.current?.navigate('Quote', { userName, quoteFromNotification });
       });
 
       return () => {
