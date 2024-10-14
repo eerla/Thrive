@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, ScrollView, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 // Top 15 common occupations worldwide
 const occupations = [
@@ -24,64 +25,77 @@ export default function ConfigScreen({ navigation, setUserName, deviceToken }) {
   const [language, setLanguage] = useState('');
   const [frequency, setFrequency] = useState(1);
 
+  // Fetch user data from AsyncStorage when the screen loads
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const savedName = await AsyncStorage.getItem('name');
+        const savedGender = await AsyncStorage.getItem('gender');
+        const savedAge = await AsyncStorage.getItem('age');
+        const savedOccupation = await AsyncStorage.getItem('occupation');
+        const savedLanguage = await AsyncStorage.getItem('language');
+        const savedFrequency = await AsyncStorage.getItem('frequency');
+
+        if (savedName) setName(savedName);
+        if (savedGender) setGender(savedGender);
+        if (savedAge) setAge(Number(savedAge));
+        if (savedOccupation) setOccupation(savedOccupation);
+        if (savedLanguage) setLanguage(savedLanguage);
+        if (savedFrequency) setFrequency(Number(savedFrequency));
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+      }
+    };
+
+    loadUserData();
+  }, []);
+
   // Function to handle form submission and send user data to backend
-  const handleSubmit = () => {
-      // Check if deviceToken exists before using it
-      if (!deviceToken) {
+    const handleSubmit = async () => {
+      try {
+        if (!deviceToken) {
           Alert.alert('Error', 'Device token not available');
           return;
-      }
+        }
 
-      // Send updated user data to the backend
-      fetch('http://10.0.2.2:3000/register', {
+        // Save updated user data to AsyncStorage
+        await AsyncStorage.setItem('name', name);
+        await AsyncStorage.setItem('gender', gender);
+        await AsyncStorage.setItem('age', age.toString());
+        await AsyncStorage.setItem('occupation', occupation);
+        await AsyncStorage.setItem('language', language);
+        await AsyncStorage.setItem('frequency', frequency.toString());
+
+        // Update global app state with the updated name
+        setUserName(name);
+
+        // Send updated user data to the backend
+        const response = await fetch('http://10.0.2.2:3000/register', {
           method: 'POST',
           headers: {
-              'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-              token: deviceToken, // Assuming you are passing deviceToken as a global prop
-              name,
-              gender,
-              age,
-              occupation,
-              language,
-              frequency,
+            token: deviceToken,
+            name,
+            gender,
+            age,
+            occupation,
+            language,
+            frequency,
           }),
-      })
-          .then((response) => response.text())
-          .then((result) => {
-              console.log(result);
+        });
 
-              // Show a single success alert with a clickable OK button
-              Alert.alert(
-                  'Success',
-                  'Details updated',
-                  [
-                      {
-                          text: 'OK',
-                          onPress: () => console.log('OK Pressed'),
-                      },
-                  ],
-                  { cancelable: true } // Dismissible by tapping outside
-              );
-          })
-          .catch((error) => {
-              console.error('Error updating user data:', error);
+        const result = await response.text();
+        console.log(result);
 
-              // Show a failure alert with a clickable OK button
-              Alert.alert(
-                  'Failed',
-                  'Update failed, try again!',
-                  [
-                      {
-                          text: 'OK',
-                          onPress: () => console.log('OK Pressed'),
-                      },
-                  ],
-                  { cancelable: true }
-              );
-          });
-  };
+        // Show success alert
+        Alert.alert('Success', 'Details updated', [{ text: 'OK' }], { cancelable: true });
+      } catch (error) {
+        console.error('Error updating user data:', error);
+        Alert.alert('Failed', 'Update failed, try again!', [{ text: 'OK' }], { cancelable: true });
+      }
+    };
 
   return (
     <ScrollView contentContainerStyle='flex-1 justify-center p-6 bg-white'>

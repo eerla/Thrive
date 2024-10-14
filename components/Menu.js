@@ -10,9 +10,9 @@ const Menu = ({ navigation, onClose }) => {
         <Text className="p-1 text-lg text-gray-800">Home</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => { navigation.navigate('Quote'); onClose(); }}>
-        <Text className="p-1 text-lg text-gray-800">Quote Screen</Text>
+        <Text className="p-1 text-lg text-gray-800">Quote</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => { navigation.navigate('Config'); onClose(); }}>
+      <TouchableOpacity onPress={() => { navigation.navigate('Settings'); onClose(); }}>
         <Text className="p-1 text-lg text-gray-800">Settings</Text>
       </TouchableOpacity>
     </View>

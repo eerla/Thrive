@@ -107,7 +107,7 @@ export default function App() {
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Config">
+          <Stack.Screen name="Settings">
             {(props) => (
               <ConfigScreen
                 {...props}
