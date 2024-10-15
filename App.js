@@ -7,6 +7,7 @@ import ConfigScreen from './screens/ConfigScreen';
 import QuoteScreen from './screens/QuoteScreen';
 import { Platform, StyleSheet, View, Text, LogBox } from 'react-native';
 import { NativeWindStyleSheet } from 'nativewind';
+import { EXPO_PROJECT_ID, BACKEND_URL } from '@env';
 
 // Suppress any logs related to NativeWind (Optional)
 LogBox.ignoreLogs(['NativeWindStyleSheet']);
@@ -23,11 +24,11 @@ async function registerForPushNotificationsAsync(setDeviceToken) {
         finalStatus = status;
     }
     if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
+            alert('Please turn on notifications to receive daily quotes');
         return;
     }
     token = (await Notifications.getExpoPushTokenAsync({
-        projectId: '17ce3928-9295-45e6-a288-3cbe9e714418' // expo project id
+        projectId: EXPO_PROJECT_ID, // expo project id
     })).data;
     console.log('TOKEN',token); // need to store in server device token
 
@@ -47,7 +48,7 @@ async function registerForPushNotificationsAsync(setDeviceToken) {
     console.log(defaultUserData)
     console.log('calling backend')
     // Send token to backend
-    fetch('http://10.0.2.2:3000/register', {
+    fetch(`${BACKEND_URL}/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

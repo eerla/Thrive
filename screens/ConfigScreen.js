@@ -2,20 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, ScrollView, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { BACKEND_URL, OCCUPATIONS, LANGUAGES } from '@env';
 
 // Top 15 common occupations worldwide
-const occupations = [
-  'Living life', 'Engineer', 'Doctor', 'Teacher', 'Farmer',
-  'Software Developer', 'Salesperson', 'Nurse', 'Manager', 'Accountant',
-  'Lawyer', 'Driver', 'Chef', 'Electrician', 'Plumber'
-];
+const occupations = OCCUPATIONS.split(',');
 
 // Top 15 most spoken languages worldwide
-const languages = [
-  'English', 'Mandarin', 'Hindi', 'Spanish', 'French',
-  'Arabic', 'Bengali', 'Russian', 'Portuguese', 'Indonesian',
-  'Urdu', 'German', 'Japanese', 'Telugu', 'Chinese'
-];
+const languages = LANGUAGES.split(',');
 
 export default function ConfigScreen({ navigation, setUserName, deviceToken }) {
   const [name, setName] = useState('');
@@ -70,7 +63,7 @@ export default function ConfigScreen({ navigation, setUserName, deviceToken }) {
         setUserName(name);
 
         // Send updated user data to the backend
-        const response = await fetch('http://10.0.2.2:3000/register', {
+        const response = await fetch(`${BACKEND_URL}/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
