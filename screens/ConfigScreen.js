@@ -63,8 +63,8 @@ export default function ConfigScreen({ navigation, setUserName, deviceToken }) {
         setUserName(name);
 
         // Send updated user data to the backend
-        const response = await fetch(`${BACKEND_URL}/register`, {
-          method: 'POST',
+        const response = await fetch(`${BACKEND_URL}/update`, {
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
